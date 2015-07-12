@@ -12,7 +12,8 @@
   },
   "dependencies": {
   	"jsutils-json" : "latest",
-  	"jsutils-tmpl" : "latest"
+  	"jsutils-tmpl" : "latest",
+  	"webmodules-jquery": "latest"
   },
   "keywords": [
     "polyfils"

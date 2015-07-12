@@ -6,6 +6,7 @@
 	"license": "MIT",
 	"require": {
 		"jsutils/json": ">=0.0.0",
-		"jsutils/tmpl": ">=0.0.0"
+		"jsutils/tmpl": ">=0.0.0",
+		"webmodules/jquery": ">=0.0.0"
 	}
 }
