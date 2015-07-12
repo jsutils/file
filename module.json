@@ -1,0 +1,7 @@
+{
+	"name" : "jsutils/file",
+	"jsutils/file": {
+		"js": ["jsutils.file.js"],
+		"on" : ["jsutils/tmpl","jsutils/json"]
+	}
+}

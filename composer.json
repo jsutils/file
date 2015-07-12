@@ -1,0 +1,11 @@
+{
+	"name": "jsutils/file",
+	"type": "library",
+	"description": "Javascript File Utility",
+	"keywords": ["module", "file"],
+	"license": "MIT",
+	"require": {
+		"jsutils/json": ">=0.0.0",
+		"jsutils/tmpl": ">=0.0.0"
+	}
+}

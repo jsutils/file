@@ -1,0 +1,28 @@
+{
+  "name": "jsonutils-tmpl",
+  "version": "0.0.1",
+  "main": "foo.js",
+  "description": "Javascript File Utility",
+  "authors": [
+    "lalit.tanwar07@gmail.com"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jsutils/file.git"
+  },
+  "dependencies": {
+  	"jsutils-json" : "latest",
+  	"jsutils-tmpl" : "latest"
+  },
+  "keywords": [
+    "polyfils"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
