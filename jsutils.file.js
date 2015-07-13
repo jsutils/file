@@ -1,6 +1,6 @@
 _require_(
 	"webmodules/jQuery",
-	"jsutils/json", "jsutils/tmpl",
+	"jsutils/json", "jsutils/tmpl"
 );
 _define_("jsutils.file", function(file) {
 	
