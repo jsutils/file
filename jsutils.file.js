@@ -1,3 +1,7 @@
+_require_(
+	"webmodules/jQuery",
+	"jsutils/json", "jsutils/tmpl",
+);
 _define_("jsutils.file", function(file) {
 	
 	var jQuery = _module_("jQuery");
@@ -6,7 +10,7 @@ _define_("jsutils.file", function(file) {
 	
 	file.getJSON = function(filePath,data){
 		return jQuery.getJSON(filePath).then(function(resp){
-			jsonUtil.parse(resp,data)
+			return jsonUtil.parse(resp,data);
 		});
 	};
 	

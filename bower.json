@@ -11,8 +11,8 @@
     "url": "git://github.com/jsutils/file.git"
   },
   "dependencies": {
-  	"jsutils-json" : "latest",
-  	"jsutils-tmpl" : "latest",
+  	"jsutils-json" : ">=0.0.0",
+  	"jsutils-tmpl" : ">0.0.0",
   	"webmodules-jquery": "latest"
   },
   "keywords": [
