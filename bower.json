@@ -13,7 +13,7 @@
   "dependencies": {
   	"jsutils-json" : ">=0.0.0",
   	"jsutils-tmpl" : ">0.0.0",
-  	"webmodules-jquery": "latest"
+  	"webmodules-jquery": ">=2.1.5"
   },
   "keywords": [
     "polyfils"
