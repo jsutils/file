@@ -27,7 +27,12 @@ _define_("jsutils.file", function(file) {
 	
 	file.getHTML = function(filePath,data){
 		return file.load_template(filePath).then(function(){
-			return TEMPLATES[filePath].render(data);
+			return jQuery.when(
+					(data === undefined) 
+						? TEMPLATES[filePath].template 
+							: TEMPLATES[filePath].render(data),
+					TEMPLATES[filePath].render
+			);
 		});
 	};
 	
@@ -59,6 +64,7 @@ _define_("jsutils.file", function(file) {
 							}
 						}
 					}
+					TEMPLATES[html_path].template = raw_html;
 					TEMPLATES[html_path].render = tmplUtil.compile(raw_html,{ render : __undescore_template_resolver_ });
 					return jQuery.when.apply(jQuery,P);
 				})
