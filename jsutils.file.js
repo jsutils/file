@@ -37,14 +37,13 @@ _define_("jsutils.file", function(file) {
 	};
 	
 	file.load_template = function(html_path){
-		if(!TEMPLATES[html_path]){
-			TEMPLATES[html_path] ={
-				promise :  jQuery.get(html_path).then(function(raw_html){
+		var info = URI.info(html_path);
+		if(!TEMPLATES[info.href]){
+			TEMPLATES[info.href] ={
+				promise :  jQuery.get(info.href).then(function(raw_html){
 					var P = [];
 					var mathces = raw_html.match(/<include\s*(.*?)\s*data=(.*?)\/>/g);
 					if(mathces!==null){
-						var info = URI.info(html_path);
-						var newDir = info.dir;
 						var paths = mathces.map(function(x){
 							/*
 							 * To allow all the combinations for attribute assignments
@@ -53,7 +52,7 @@ _define_("jsutils.file", function(file) {
 						});
 
 						for(var i in paths){
-							var newFilePath = URI(paths[i],newDir);
+							var newFilePath = URI(paths[i],info.origin+info.dir);
 							raw_html = raw_html.replace(
 							        /<include\s*(.*?)\s*data=(.*?)\s*\/>/,
 							        paths[i] ? '<!-- print(__.render("'+newFilePath+'",$2)); -->'
@@ -64,13 +63,13 @@ _define_("jsutils.file", function(file) {
 							}
 						}
 					}
-					TEMPLATES[html_path].template = raw_html;
-					TEMPLATES[html_path].render = tmplUtil.compile(raw_html,{ render : __undescore_template_resolver_ });
+					TEMPLATES[info.href].template = raw_html;
+					TEMPLATES[info.href].render = tmplUtil.compile(raw_html,{ render : __undescore_template_resolver_ });
 					return jQuery.when.apply(jQuery,P);
 				})
 			};
 		}
-		return TEMPLATES[html_path].promise;
+		return TEMPLATES[info.href].promise;
 	};
 
 });
