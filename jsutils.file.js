@@ -71,5 +71,43 @@ _define_("jsutils.file", function(file) {
 		}
 		return TEMPLATES[info.href].promise;
 	};
+	
+	file.loadView = function(htmlSrc,dataSrc){
+		var htmlView = "",htmlUrl,render;
+		var dff = [];
+		if(typeof htmlSrc === 'string'){
+			htmlUrl = htmlSrc;
+			dff.push(file.getHTML(htmlUrl).done(function(respHTML,respRender){
+				render = respRender;
+			}));
+		} else if(typeof htmlSrc === 'object' && typeof htmlSrc.done == "function"){
+			dff.push(htmlSrc.done(function(resp){
+				htmlView = resp;
+			}));
+		}
+		if(typeof dataSrc === 'string'){
+			dff.push(file.getJSON(dataSrc).done(function(resp){
+				dataSrc = resp;
+			}));
+		} else if(typeof dataSrc === 'object' && typeof dataSrc.done == "function"){
+			dff.push(dataSrc.done(function(resp){
+				dataSrc = resp;
+			}));
+		}
+		return jQuery.when.apply(jQuery,dff).done(function(){
+			if(htmlUrl && render){
+				htmlView = render(dataSrc);
+			}
+		}).then(function(){
+			return jQuery.when(htmlView,dataSrc,htmlUrl);
+		});
+	};
+	
+	jQuery.fn.loadView = function(htmlSrc,dataSrc){
+		var elem = this;
+		return file.loadView(htmlSrc,dataSrc).done(function(htmlView,dataSrc,htmlUrl){
+			elem.html(htmlView);
+		});
+	};
 
 });
