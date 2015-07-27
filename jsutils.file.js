@@ -1,7 +1,3 @@
-_require_(
-	"webmodules/jQuery",
-	"jsutils/json", "jsutils/tmpl"
-);
 _define_("jsutils.file", function(file) {
 	
 	var jQuery = _module_("jQuery");
