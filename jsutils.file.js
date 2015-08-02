@@ -4,16 +4,20 @@ _define_("jsutils.file", function(file) {
 	var jsonUtil = _module_("jsutils.json");
 	var tmplUtil = _module_("jsutils.tmpl");
 	
+	file.getVersionData = function(data){
+		return data || {
+			_ : bootloader ? bootloader.config().version : ""
+		};
+	};
+	
 	file.getJSON = function(filePath,data){
-		return jQuery.getJSON(filePath).then(function(resp){
+		return jQuery.getJSON(filePath,getVersionData).then(function(resp){
 			return jsonUtil.parse(resp,data);
 		});
 	};
 	
 	file.get = function(file,data){
-		return jQuery.get(file,data || {
-			_ : bootloader ? bootloader.config().version : ""
-		});
+		return jQuery.get(file,file.getVersionData(data));
 	};
 	
 	var TEMPLATES = {};
