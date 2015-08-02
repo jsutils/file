@@ -10,6 +10,12 @@ _define_("jsutils.file", function(file) {
 		});
 	};
 	
+	file.get = function(file,data){
+		return jQuery.get(file,data || {
+			_ : bootloader ? bootloader.config().version : ""
+		});
+	};
+	
 	var TEMPLATES = {};
 	
 	var __undescore_template_resolver_ = function(file_name, data) {
@@ -36,7 +42,7 @@ _define_("jsutils.file", function(file) {
 		var info = URI.info(html_path);
 		if(!TEMPLATES[info.href]){
 			TEMPLATES[info.href] ={
-				promise :  jQuery.get(info.href).then(function(raw_html){
+				promise :  file.get(info.href).then(function(raw_html){
 					var P = [];
 					var mathces = raw_html.match(/<include\s*(.*?)\s*data=(.*?)\/>/g);
 					if(mathces!==null){
