@@ -11,13 +11,13 @@ _define_("jsutils.file", function(file) {
 	};
 	
 	file.getJSON = function(filePath,data){
-		return jQuery.getJSON(filePath,getVersionData).then(function(resp){
+		return jQuery.getJSON(filePath,file.getVersionData(data)).then(function(resp){
 			return jsonUtil.parse(resp,data);
 		});
 	};
 	
-	file.get = function(file,data){
-		return jQuery.get(file,file.getVersionData(data));
+	file.get = function(filePath,data){
+		return jQuery.get(filePath,file.getVersionData(data));
 	};
 	
 	var TEMPLATES = {};
