@@ -1,6 +1,5 @@
 {
-  "name": "jsonutils-tmpl",
-  "version": "0.0.1",
+  "name": "jsutils-file",
   "main": "foo.js",
   "description": "Javascript File Utility",
   "authors": [
