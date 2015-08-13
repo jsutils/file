@@ -114,7 +114,7 @@ _define_("jsutils.file", function(file) {
     }
     return jQuery.when.apply(jQuery,dff).done(function(){
       if(render){
-        OBJ.html = render(OBJ.src);
+        OBJ.html = render(OBJ.data);
       }
     }).then(function(){
       return jQuery.when(OBJ);
