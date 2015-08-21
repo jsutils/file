@@ -90,6 +90,15 @@ _define_("jsutils.file", function(file) {
     var htmlView = "",htmlUrl,render;
     var dff = [];
 
+    if(is.Function(OBJ.src)){
+      OBJ.src = OBJ.src();
+    } else if(is.Function(OBJ.html)){
+      OBJ.html = OBJ.html();
+      if(is.Object(OBJ.html) && is.Function(OBJ.html.done)){
+        OBJ.src = OBJ.html;
+      }
+    }
+
     if(is.String(OBJ.src)){
       htmlUrl = OBJ.src;
       dff.push(file.getHTML(htmlUrl).done(function(respHTML,respRender){
