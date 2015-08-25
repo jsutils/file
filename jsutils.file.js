@@ -130,7 +130,7 @@ _define_("jsutils.file", function(file) {
     });
   };
 
-  jQuery.fn.loadView = function(htmlSrc,dataSrc){
+  var loadTemp = function(htmlSrc,dataSrc){
     var elem = this;
     var dff = jQuery.Deferred();
     file.loadView(htmlSrc,dataSrc).then(function(OBJ){
@@ -139,5 +139,11 @@ _define_("jsutils.file", function(file) {
     });
     return dff.promise();
   };
+
+  jQuery.fn.loadTemplate = jQuery.fn.loadTemplate || loadTemp;
+  jQuery.fn.loadTemp = jQuery.fn.loadTemp || loadTemp;
+  jQuery.fn.loadView = jQuery.fn.loadView || loadTemp;
+  jQuery.fn.tmpl = jQuery.fn.tmpl || loadTemp;
+
 
 });
