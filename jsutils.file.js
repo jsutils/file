@@ -136,7 +136,7 @@ _define_("jsutils.file", function (file) {
     elem.addClass("__template__loading__").append('<div class="__template__loader__"></div>');
     file.loadView(htmlSrc, dataSrc).then(function (OBJ) {
       elem.html(OBJ.html);
-      elem.removeClass("__template__loading__")
+      elem.removeClass("__template__loading__");
       return dff.resolveWith(elem, arguments);
     });
     return dff.promise();
