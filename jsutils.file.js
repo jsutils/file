@@ -82,9 +82,13 @@ _define_("jsutils.file", function (file) {
       TEMPLATES[info.href].promise = REQ.then(function (raw_html_full) {
         var raw_html = raw_html_full;
         if(full_html){
-          raw_html = jQuery('<wrap>'+raw_html_full+'</<wrap>').find("[src='./" + html_path.replace(remoteSrcDir,"") +"']").html();
+          var div = document.createElement("div");
+          div.innerHTML = raw_html_full;
+          raw_html = jQuery(div).find("[src='./" + html_path.replace(remoteSrcDir,"") +"']").text();
         }
         var P = [];
+        raw_html = raw_html.replace(/><\/include>/g,"\/>");
+
         var mathces = raw_html.match(/<include\s*(.*?)\s*data=(.*?)\/>/g);
         if (mathces !== null) {
           var paths = mathces.map(function (x) {
