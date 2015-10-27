@@ -3,11 +3,30 @@ _define_("jsutils.file", function (file) {
   var jQuery = _module_("jQuery");
   var jsonUtil = _module_("jsutils.json");
   var tmplUtil = _module_("jsutils.tmpl");
+  var remoteSrcDir = null;
 
   file.getVersionData = function (data) {
     return data || {
       _: bootloader ? bootloader.config().version : ""
     };
+  };
+
+  var getOneHtmlFile = function (html_path) {
+    if(bootloader && bootloader.config && !bootloader.config().debug){
+      if(!remoteSrcDir){
+        var uri = URI.info(bootloader.config().resourceUrl + bootloader.config().resourceDir+"/");
+        remoteSrcDir = uri.origin + URI.clean(uri.pathname);
+      }
+      var bundles = bootloader.config().resource.bundles;
+      var rel_html_path = html_path.replace(remoteSrcDir,"");
+      for(var pack in bundles){
+        var bundle = bundles[pack];
+        if(bundle.html && bundle.html.indexOf(rel_html_path)>-1 && bundle.bundled_html && bundle.bundled_html.length>0){
+          return remoteSrcDir + bundle.bundled_html;
+        }
+      }
+    }
+    return null
   };
 
   file.getJSON = function (filePath, data) {
@@ -33,47 +52,64 @@ _define_("jsutils.file", function (file) {
 
   file.getHTML = function (filePath, data) {
     return file.load_template(filePath).then(function () {
-      return jQuery.when(
-        (data === undefined)
-          ? TEMPLATES[filePath].template
-          : TEMPLATES[filePath].render(data),
-        TEMPLATES[filePath].render
-      );
+      if(TEMPLATES[filePath]){
+        return jQuery.when(
+          (data === undefined)
+            ? TEMPLATES[filePath].template
+            : TEMPLATES[filePath].render(data),
+          TEMPLATES[filePath].render
+        );
+      } else {
+          console.error("Template ",filePath,"was not loaded");
+      }
     });
   };
 
+  var REQUESTS = {};
   file.load_template = function (html_path) {
     var info = URI.info(html_path);
     if (!TEMPLATES[info.href]) {
-      TEMPLATES[info.href] = {
-        promise: file.get(info.href).then(function (raw_html) {
-          var P = [];
-          var mathces = raw_html.match(/<include\s*(.*?)\s*data=(.*?)\/>/g);
-          if (mathces !== null) {
-            var paths = mathces.map(function (x) {
-              /*
-               * To allow all the combinations for attribute assignments
-               */
-              return ((/src="?([^"\s]+)"?\s*/).exec(x)[1]).replace(/(^\')|(\'$)/g, "");
-            });
+      var full_html = getOneHtmlFile(info.href);
+      var REQ ;
+      if(full_html) {
+        REQ = REQUESTS[full_html] || file.get(full_html);
+        REQUESTS[full_html] = REQ;
+      } else {
+        REQ = REQUESTS[info.href] ||  file.get(info.href);
+        REQUESTS[info.href] = REQ;
+      }
+      TEMPLATES[info.href] = {};
+      TEMPLATES[info.href].promise = REQ.then(function (raw_html_full) {
+        var raw_html = raw_html_full;
+        if(full_html){
+          raw_html = jQuery('<wrap>'+raw_html_full+'</<wrap>').find("[src='./" + html_path.replace(remoteSrcDir,"") +"']").html();
+        }
+        var P = [];
+        var mathces = raw_html.match(/<include\s*(.*?)\s*data=(.*?)\/>/g);
+        if (mathces !== null) {
+          var paths = mathces.map(function (x) {
+            /*
+             * To allow all the combinations for attribute assignments
+             */
+            return ((/src="?([^"\s]+)"?\s*/).exec(x)[1]).replace(/(^\')|(\'$)/g, "");
+          });
 
-            for (var i in paths) {
-              var newFilePath = URI(paths[i], info.origin + info.dir);
-              raw_html = raw_html.replace(
-                /<include\s*(.*?)\s*data=(.*?)\s*\/>/,
-                paths[i] ? '<!-- print(__.render("' + newFilePath + '",$2)); -->'
-                  : ""
-              );
-              if (paths[i]) {
-                P.push(file.load_template(newFilePath));
-              }
+          for (var i in paths) {
+            var newFilePath = URI(paths[i], info.origin + info.dir);
+            raw_html = raw_html.replace(
+              /<include\s*(.*?)\s*data=(.*?)\s*\/>/,
+              paths[i] ? '<!-- print(__.render("' + newFilePath + '",$2)); -->'
+                : ""
+            );
+            if (paths[i]) {
+              P.push(file.load_template(newFilePath));
             }
           }
-          TEMPLATES[info.href].template = raw_html;
-          TEMPLATES[info.href].render = tmplUtil.compile(raw_html, { render: __undescore_template_resolver_ });
-          return jQuery.when.apply(jQuery, P);
-        })
-      };
+        }
+        TEMPLATES[info.href].template = raw_html;
+        TEMPLATES[info.href].render = tmplUtil.compile(raw_html, { render: __undescore_template_resolver_ });
+        return jQuery.when.apply(jQuery, P);
+      });
     }
     return TEMPLATES[info.href].promise;
   };
