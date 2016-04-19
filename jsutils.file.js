@@ -118,7 +118,8 @@ _define_("jsutils.file", function (file) {
     return TEMPLATES[info.href].promise;
   };
 
-  file.loadView = function (htmlSrc, dataSrc) {
+  file.loadView = function (htmlSrc, dataSrc,dummyData) {
+    var $viewDff = jQuery.Deferred();
     var OBJ = {};
     if (is.Object(htmlSrc) && typeof is.Function(htmlSrc.done)) {
       OBJ = htmlSrc;
@@ -143,6 +144,8 @@ _define_("jsutils.file", function (file) {
       htmlUrl = OBJ.src;
       dff.push(file.getHTML(htmlUrl).done(function (respHTML, respRender) {
         render = respRender;
+        OBJ.rawHtml = respHTML;
+        $viewDff.notify(OBJ);
       }));
     } else if (is.Object(OBJ.src) && is.Function(OBJ.src.done)) {
       dff.push(OBJ.src.done(function (resp) {
@@ -161,23 +164,33 @@ _define_("jsutils.file", function (file) {
         OBJ.data = resp;
       }));
     }
-    return jQuery.when.apply(jQuery, dff).done(function () {
+    var $viewDffPromise = $viewDff.promise();
+    jQuery.when.apply(jQuery, dff).done(function () {
       if (render) {
         OBJ.html = render(OBJ.data);
       }
     }).then(function () {
-      return jQuery.when(OBJ);
+      $viewDff.resolve(OBJ);
+      return $viewDffPromise;
     });
+    return $viewDffPromise;
   };
 
-  var loadTemp = function (htmlSrc, dataSrc) {
+  var loadTemp = function (htmlSrc, dataSrc, dummyData) {
     var elem = this;
     var dff = jQuery.Deferred();
     elem.addClass("__template__loading__").append('<div class="__template__loader__"></div>');
-    file.loadView(htmlSrc, dataSrc).then(function (OBJ) {
+    file.loadView(htmlSrc, dataSrc, dummyData).then(function (OBJ) {
       elem.html(OBJ.html);
       elem.removeClass("__template__loading__");
       return dff.resolveWith(elem, arguments);
+    }).progress(function(OBJ){
+      if(dummyData){
+        elem.html(
+          tmplUtil.compile(OBJ.html, { render: __undescore_template_resolver_ })(dummyData)
+        );
+      }
+      dff.notify(OBJ);
     });
     return dff.promise();
   };
