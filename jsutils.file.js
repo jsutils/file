@@ -187,7 +187,7 @@ _define_("jsutils.file", function (file) {
     }).progress(function(OBJ){
       if(dummyData){
         elem.html(
-          tmplUtil.compile(OBJ.html, { render: __undescore_template_resolver_ })(dummyData)
+          tmplUtil.compile(OBJ.rawHtml, { render: __undescore_template_resolver_ })(dummyData)
         );
       }
       dff.notify(OBJ);
