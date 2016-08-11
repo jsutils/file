@@ -66,6 +66,28 @@ _define_("jsutils.file", function (file) {
   };
 
   var REQUESTS = {};
+  
+  file.getXML = function (html_path) {
+    var info = URI.info(html_path);
+    var full_html = getOneHtmlFile(info.href);
+      if(full_html) {
+        REQ = REQUESTS[full_html] || file.get(full_html);
+        REQUESTS[full_html] = REQ;
+      } else {
+        REQ = REQUESTS[info.href] ||  file.get(info.href);
+        REQUESTS[info.href] = REQ;
+      }
+      return REQ.then(function(raw_html_full) {
+        var raw_html = raw_html_full;
+        if(full_html){
+          var div = document.createElement("div");
+          div.innerHTML = raw_html_full;
+          raw_html = jQuery(div).find("[src='./" + html_path.replace(remoteSrcDir,"") +"']").text();
+        }
+        return raw_html;
+      });
+  };
+  
   file.load_template = function (html_path) {
     var info = URI.info(html_path);
     if (!TEMPLATES[info.href]) {
