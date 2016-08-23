@@ -202,7 +202,7 @@ _define_("jsutils.file", function (file) {
     var elem = this;
     var dff = jQuery.Deferred();
     elem.addClass("__template__loading__").append('<div class="__template__loader__"></div>');
-    file.loadView(htmlSrc, dataSrc, dummyData).then(function (OBJ) {
+    file.loadTemplate(htmlSrc, dataSrc, dummyData).then(function (OBJ) {
       elem.html(OBJ.html);
       elem.removeClass("__template__loading__");
       return dff.resolveWith(elem, arguments);
@@ -217,6 +217,7 @@ _define_("jsutils.file", function (file) {
     return dff.promise();
   };
 
+  file.loadTemplate = file.loadView;
   jQuery.fn.loadTemplate = jQuery.fn.loadTemplate || loadTemp;
   jQuery.fn.loadTemp = jQuery.fn.loadTemp || loadTemp;
   jQuery.fn.loadView = jQuery.fn.loadView || loadTemp;
