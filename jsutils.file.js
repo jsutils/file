@@ -217,8 +217,9 @@ _define_("jsutils.file", function(file) {
         })(dataSrc, dummyData).then(function(OBJ) {
             elem.html(OBJ.html);
             elem.removeClass("__template__loading__");
+            var args = arguments;
             setTimeout(function() {
-                dff.resolveWith(elem, arguments);
+                dff.resolveWith(elem, args);
             });
         }).progress(function(OBJ) {
             if (dummyData) {
