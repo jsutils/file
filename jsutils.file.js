@@ -220,7 +220,10 @@ _define_("jsutils.file", function(file) {
         })(dataSrc, dummyData).then(function(OBJ) {
             elem.html(OBJ.html);
             elem.removeClass("__template__loading__");
-            return dff.resolveWith(elem, arguments);
+            var args = arguments;
+            setTimeout(function() {
+                dff.resolveWith(elem, args);
+            });
         }).progress(function(OBJ) {
             if (dummyData) {
                 elem.html(
