@@ -30,9 +30,12 @@ _define_("jsutils.file", function(file) {
     };
 
     file.getJSON = function(filePath, data) {
-        return jQuery.getJSON(filePath, file.getVersionData(data)).then(function(resp) {
-            return jsonUtil.parse(resp, data);
-        });
+        if(!TEMPLATES[filePath]){
+            TEMPLATES[filePath] = jQuery.getJSON(filePath, file.getVersionData(data)).then(function(resp) {
+                return jsonUtil.parse(resp, data);
+            });
+        }
+        return TEMPLATES[filePath];
     };
 
     file.get = function(filePath, data) {
