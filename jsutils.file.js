@@ -30,17 +30,21 @@ _define_("jsutils.file", function(file) {
     };
 
     file.getJSON = function(filePath, data) {
-        if(!TEMPLATES[filePath]){
-            TEMPLATES[filePath] = jQuery.getJSON(filePath, file.getVersionData(data)).then(function(resp) {
-                return jsonUtil.parse(resp, data);
-            });
-        }
-        return TEMPLATES[filePath];
+        return jQuery.getJSON(filePath, file.getVersionData(data)).then(function(resp) {
+            return jsonUtil.parse(resp, data);
+        });
     };
 
     file.get = function(filePath, data) {
         return jQuery.get(filePath, file.getVersionData(data));
     };
+
+    var shortPaths = {};
+
+    file.set = function(shortName,actualPath){
+        shortPaths["$"+shortName] = actualPath;
+    };
+
 
     var TEMPLATES = {};
 
@@ -125,6 +129,9 @@ _define_("jsutils.file", function(file) {
 
                     for (var i in paths) {
                         var newFilePath = URI(paths[i], info.origin + info.dir);
+                        if(paths[i].indexOf("$") === 0 && shortPaths[paths[i]] !== undefined){
+                            newFilePath = shortPaths[paths[i]]
+                        }
                         raw_html = raw_html.replace(
                             /<include\s*(.*?)\s*data=(.*?)\s*\/>/,
                             paths[i] ? '<!-- print(__.render("' + newFilePath + '",$2)); -->'
